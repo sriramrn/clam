@@ -2,8 +2,7 @@ import numpy as np
 import scipy.integrate
 
 
-#Detect indices of bout start and ends
-#Disregards bouts that might be cut off at the beginning and end of trials
+
 def bout_detect(data,min_thresh=0.05,max_thresh=0.15,min_spacing=7):
     """
     detect bouts where the input signal crosses a given threshold
@@ -17,6 +16,8 @@ def bout_detect(data,min_thresh=0.05,max_thresh=0.15,min_spacing=7):
 
     Output :
     indices of start and end of each bout
+
+    Incomplete bouts are ignored
     """
 
     start=np.array([0])
