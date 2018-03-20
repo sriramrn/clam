@@ -77,11 +77,11 @@ def peakdet(v, delta, x = None):
 
 
 def filter_peaks_by_spacing(peaks, minspacing):
-    #peaks must be a numpy array of the form (index,peak_value)
-    #minspacing : minimum interval between peaks
-    #note: minspacing and peaks[:,0] must be in the same units of measurement
-    #this could be index or time
-
+    """
+    pick the largest peak if there is a cluster of peaks
+    peaks : numpy array of the form (index,peak_value)
+    minspacing : minimum interval between peaks
+    """
     peakindex = peaks[:,0]
     peakvalue = peaks[:,1]
 
@@ -125,5 +125,6 @@ def filter_peaks_by_spacing(peaks, minspacing):
 
 
 def smoothen(data,window):
+    """sliding window average of input signal"""
     w = np.ones(window)/window
     return np.convolve(data,w,'same')

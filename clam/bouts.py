@@ -5,7 +5,19 @@ import scipy.integrate
 #Detect indices of bout start and ends
 #Disregards bouts that might be cut off at the beginning and end of trials
 def bout_detect(data,min_thresh=0.05,max_thresh=0.15,min_spacing=7):
+    """
+    detect bouts where the input signal crosses a given threshold
 
+    Input :
+    data : 1D signal (eg: timeseries)
+    min_thresh : minimum value that must be crossed during a bouts
+    max_thresh : minimum value that must be attained during a bout at least once
+    min_spacing : minimum number of data points that the signal must be less
+                  than 'min_thresh' for a bout to end
+
+    Output :
+    indices of start and end of each bout
+    """
 
     start=np.array([0])
     end=np.array([0])
