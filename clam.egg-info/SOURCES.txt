@@ -1,0 +1,10 @@
+setup.py
+clam/__init__.py
+clam/bouts.py
+clam/load.py
+clam/utils.py
+clam.egg-info/PKG-INFO
+clam.egg-info/SOURCES.txt
+clam.egg-info/dependency_links.txt
+clam.egg-info/not-zip-safe
+clam.egg-info/top_level.txt
