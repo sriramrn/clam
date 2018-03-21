@@ -60,12 +60,11 @@ def bout_detect(data,min_thresh=0.05,max_thresh=0.15,min_spacing=7):
             start=start[0:len(start)-1]
 
         thresh=max_thresh
-        i=0
-        while i<len(start):
+
+        for i in range(len(start)):
             if max(data[start[i]:end[i]])>thresh:
                 s=np.append(s,start[i])
                 e=np.append(e,end[i])
-            i+=1
 
         s=s[1::]
         e=e[1::]
@@ -79,11 +78,9 @@ def bout_duration(bout_index,timestamp):
     end_index=np.array(bout_index[1])
 
     duration=[]
-    i=0
-    while i<len(start_index):
+    for i in range(len(start_index)):
         if end_index[i]-start_index[i]!=0:
             duration.append(timestamp[end_index[i]]-timestamp[start_index[i]])
-        i+=1
 
     return duration
 
@@ -94,14 +91,12 @@ def mean_bout_velocity(data,bout_index,timestamp,bout_duration):
     end_index=np.array(bout_index[1])
 
     strength=[]
-    i=0
-    while i<len(start_index):
+    for i in range(len(start_index)):
         if end_index[i]-start_index[i]!=0:
             x=timestamp[start_index[i]:end_index[i]]
             y=data[start_index[i]:end_index[i]]
             auc=scipy.integrate.simps(y,x=x,even='avg')
             strength.append(auc/bout_duration[i])
-        i+=1
 
     return strength
 
@@ -112,11 +107,9 @@ def inter_bout_interval(bout_index,timestamp):
     end_index=np.array(bout_index[1])
 
     IBI=[]
-    i=0
-    while i<len(start_index)-1:
+    for i in range(len(start_index)-1):
         if end_index[i]-start_index[i]!=0:
             IBI.append(timestamp[start_index[i+1]]-timestamp[end_index[i]])
-        i+=1
 
     return IBI
 
@@ -127,10 +120,9 @@ def max_bout_velocity(data,bout_index):
     end_index=np.array(bout_index[1])
 
     max_vel=[]
-    i=0
-    while i<len(start_index):
-        max_vel.append(max(data[start_index[i]:end_index[i]]))
-        i+=1
+    for i in range(len(start_index)):
+        if len(data[start_index[i]:end_index[i]]) != 0:
+            max_vel.append(max(data[start_index[i]:end_index[i]]))
 
     return max_vel
 
@@ -138,9 +130,7 @@ def max_bout_velocity(data,bout_index):
 def bout_displacement(bout_duration,mean_bout_velocity):
 
     disp=[]
-    i=0
-    while i<len(bout_duration):
+    for i in range(len(bout_duration)):
         disp.append(mean_bout_velocity[i]*bout_duration[i])
-        i+=1
 
     return disp
