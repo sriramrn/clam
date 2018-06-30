@@ -43,3 +43,36 @@ def load_raw_data(path, separator = ',\n'):
     data_dict = dict(zip(fileID,data))
 
     return data_dict
+
+
+def load_group(file_group, separator = ',\n'):
+
+    """load data from multiple sessions as a list of dictionaries"""
+
+    data_dicts = []
+    for path in file_group:
+        d = load_raw_data(path, separator = separator)
+        data_dicts.append(d)
+        
+    return data_dicts
+
+
+def paramdict(pathtoparamfile):
+    
+    """load experiment settings from the saved params.txt file"""
+   
+    f = open(pathtoparamfile,'r')
+    params = f.readlines()
+    f.close()
+    
+    paramlist = []
+    entry = []
+    for i in range(len(params)):
+        if len(params[i])>1:
+            paramlist.append(params[i].split(':',1)[0].split('\t',1)[0])
+            entry.append(params[i].split(':',1)[1][1::].split('\n',1)[0])
+    
+    zippedparams = zip(paramlist,entry)
+    param_dict = dict(zippedparams)
+    
+    return param_dict
