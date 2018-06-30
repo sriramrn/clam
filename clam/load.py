@@ -34,7 +34,7 @@ def load_raw_data(path, separator = ',\n'):
             if not error:
                 print('Error Loading Data:')
                 error = True
-            print(''incorrect separator, no data returned for {}'.format(f.split('/')[-1])')
+            print('incorrect separator, no data returned for {}'.format(f.split('/')[-1])')
 
         read.close()
         data[i] = temp
