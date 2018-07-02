@@ -128,3 +128,64 @@ def smoothen(data,window):
     """sliding window average of input signal"""
     w = np.ones(window)/window
     return np.convolve(data,w,'same')
+
+
+def ttl_edges(digital_signal, logic_level, begin_low = True, end_low = True):
+    """logic_level should be 1 or 5"""
+
+    if logic_level == 1:
+        digital_signal = digital_signal*5
+
+    if end_low:
+        if digital_signal[-1] >= 1:
+            digital_signal[-1] = 0
+            
+    if begin_low:
+        if digital_signal[0] >= 1:
+            digital_signal[0] = 0
+    
+    all_edges = np.diff(digital_signal).astype(int)
+
+    rising_edges = np.where(all_edges >= 1)[0]
+    falling_edges = np.where(all_edges <= -1)[0]
+    
+    
+    return rising_edges, falling_edges
+
+
+def triggered_response(raw_traces, trig_indices, trig_range):
+    
+    nframes = len(raw_traces[0])
+    
+    triggered_traces = []
+    triggered_averages = []
+        
+    for i in range(len(raw_traces)):
+        
+        cell = raw_traces[i]
+        tt = []
+        
+        for ti in trig_indices:
+        
+            if ti+trig_range[0] >= 0 and ti+trig_range[1] <= nframes:
+                
+                crop = cell[ti+trig_range[0]:ti+trig_range[1]]
+                tt.append(crop)
+
+        triggered_traces.append(tt)
+        if len(tt) > 0:
+            triggered_averages.append(np.mean(tt,0))
+        
+    return triggered_traces, triggered_averages
+
+
+def get_imaging_frames_for_behavior_trigger_times(trigger_times, imaging_timestamp):
+    
+    loc = []
+    for t in trigger_times:
+        l = abs(imaging_timestamp - t).argmin()
+        loc.append(l)
+        
+    return loc
+
+

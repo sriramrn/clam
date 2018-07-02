@@ -134,3 +134,18 @@ def bout_displacement(bout_duration,mean_bout_velocity):
         disp.append(mean_bout_velocity[i]*bout_duration[i])
 
     return disp
+
+
+def swim_latency(bout_start_time, flow_start_time, flow_end_time, trial_duration):
+    
+    latency = []
+    trial_number = []
+    for i in range(len(flow_start_time)):
+        s = np.where(np.array(bout_start_time) >= flow_start_time[i])[0]
+        if len(s) != 0:
+            s = s[0]
+            if bout_start_time[s] <= flow_end_time[i]:
+                latency.append(bout_start_time[s]-flow_start_time[i])
+                trial_number.append(math.floor(bout_start_time[s]/trial_duration))
+    
+    return latency, trial_number
