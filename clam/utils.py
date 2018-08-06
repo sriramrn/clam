@@ -156,7 +156,7 @@ def ttl_edges(digital_signal, logic_level, begin_low = True, end_low = True):
 def triggered_response(raw_traces, trig_indices, trig_range, nframes):
             
     ntraces = 1
-    if np.array(raw_traces).shape[0] > 1:
+    if len(np.array(raw_traces).shape) > 1:
         ntraces = np.array(raw_traces).shape[0]  
     
     triggered_traces = []
