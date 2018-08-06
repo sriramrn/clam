@@ -153,9 +153,9 @@ def ttl_edges(digital_signal, logic_level, begin_low = True, end_low = True):
     return rising_edges, falling_edges
 
 
-def triggered_response(raw_traces, trig_indices, trig_range):
+def triggered_response(raw_traces, trig_indices, trig_range, nframes):
     
-    nframes = len(raw_traces[0])
+    # nframes = len(raw_traces[0])
     
     triggered_traces = []
     triggered_averages = []
