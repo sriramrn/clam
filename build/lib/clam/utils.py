@@ -161,9 +161,13 @@ def triggered_response(raw_traces, trig_indices, trig_range, nframes):
     triggered_averages = []
         
     for i in range(len(raw_traces)):
+
+	if np.array(raw_traces).shape[0] > 1:       
+            cell = raw_traces[i]
+	else:
+	    cell = raw_traces
         
-        cell = raw_traces[i]
-        tt = []
+	tt = []
         
         for ti in trig_indices:
         
