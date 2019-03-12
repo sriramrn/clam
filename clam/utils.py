@@ -195,3 +195,23 @@ def get_imaging_frames_for_behavior_trigger_times(trigger_times, imaging_timesta
     return loc
 
 
+def rolling_avg(data,w):
+    
+    w = w + np.remainder(w,2)
+    hw = int(w/2)
+    
+    avg = []
+    for i in range(len(data)):
+    
+        if i < hw:
+            a = np.mean(data[0:w])
+            
+        if i > hw and len(data)-i > hw:
+            a = np.mean(data[i-hw:i+hw])
+            
+        if i > hw and len(data)-i < hw:
+            a = np.mean(data[-w::])
+            
+        avg.append(a)
+    
+    return avg
