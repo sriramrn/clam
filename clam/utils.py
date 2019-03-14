@@ -185,7 +185,7 @@ def triggered_response(raw_traces, trig_indices, trig_range, nframes):
     return triggered_traces, triggered_averages
 
 
-def get_imaging_frames_for_behavior_trigger_times(trigger_times, imaging_timestamp):
+def get_trigger_frames_from_trigger_times(trigger_times, imaging_timestamp):
     
     loc = []
     for t in trigger_times:
