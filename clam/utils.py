@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import math
 
 
 def peakdet(v, delta, x = None):
@@ -130,6 +131,28 @@ def smoothen(data,window):
     return np.convolve(data,w,'same')
 
 
+def rolling_avg(data,w):
+    
+    w = w + np.remainder(w,2)
+    hw = int(w/2)
+    
+    avg = []
+    for i in range(len(data)):
+    
+        if i < hw:
+            a = np.mean(data[0:w])
+            
+        if i > hw and len(data)-i > hw:
+            a = np.mean(data[i-hw:i+hw])
+            
+        if i > hw and len(data)-i < hw:
+            a = np.mean(data[-w::])
+            
+        avg.append(a)
+    
+    return avg
+
+
 def ttl_edges(digital_signal, logic_level, begin_low = True, end_low = True):
     """logic_level should be 1 or 5"""
 
@@ -195,23 +218,105 @@ def get_trigger_frames_from_trigger_times(trigger_times, imaging_timestamp):
     return loc
 
 
-def rolling_avg(data,w):
+def select_cells_from_triggered_responses(triggered_traces, triggered_averages, cell_indices):
     
-    w = w + np.remainder(w,2)
-    hw = int(w/2)
+    selected_traces, selected_averages = [],[]
+    for i in range(len(triggered_averages)):
+        if i in cell_indices:
+            selected_traces.append(triggered_traces[i])
+            selected_averages.append(triggered_averages[i])
     
-    avg = []
-    for i in range(len(data)):
+    return selected_traces, selected_averages
+
+
+
+def select_trials_from_triggered_responses(triggered_traces, trial_indices):
     
-        if i < hw:
-            a = np.mean(data[0:w])
+    # assumes this is a list of lists. If its a numpy array, this may return ntrials instead of ncells
+    ncells = len(triggered_traces)
+    
+    selected_traces, selected_averages = [],[]
+    
+    for i in range(ncells):
+        st = []
+        for ii in range(len(triggered_traces[i])):
+            if ii in trial_indices:
+                st.append(triggered_traces[i][ii])
+        
+        selected_traces.append(st)
+        selected_averages.append(np.mean(st,0))
+    
+    return selected_traces, selected_averages
+
+
+
+def optimal_latency_window(latencies, w = 0.128, step = 0.128, lat_range = [0.512, 2]):
+    
+    latencies = np.array(latencies)
+    
+    optimal_latency = 0
+    nbouts = 0
+    
+    steps = math.ceil(np.diff(lat_range)/step)
+    
+    for i in range(steps):
+        
+        lat = i*step + lat_range[0]
+        
+        bouts_within_window = latencies[latencies >= lat-w]
+        bouts_within_window = bouts_within_window[bouts_within_window <= lat+w]
+    
+        if len(bouts_within_window) >= nbouts:
             
-        if i > hw and len(data)-i > hw:
-            a = np.mean(data[i-hw:i+hw])
-            
-        if i > hw and len(data)-i < hw:
-            a = np.mean(data[-w::])
-            
-        avg.append(a)
+            optimal_latency = lat
+            nbouts = len(bouts_within_window)
+                    
+    return optimal_latency, nbouts
+
+
+
+def latency_clamped_flow_times(flow_start_time, flow_end_time, bout_start_time,
+                               latency_clamp, w = 0.128):
     
-    return avg
+    lat_clamp_fs_time = []
+    for i in range(len(flow_start_time)):
+        s = np.where(np.array(bout_start_time) > flow_start_time[i])[0]
+        if len(s) != 0:
+            s = s[0]
+            s = bout_start_time[s]
+            if s < flow_end_time[i]:
+                latency = s - flow_start_time[i]
+                if abs(latency - latency_clamp) <= w:
+                    lat_clamp_fs_time.append(flow_start_time[i])
+            
+    return lat_clamp_fs_time
+
+
+
+def detect_significant_responses(triggered_traces, idx_before, idx_after, span, std_thresh = 1.5):
+
+    responses = []
+    response_amplitudes = []
+    
+    for i in range(len(triggered_traces)):
+        
+        mean = np.mean(triggered_traces[i][idx_before-span : idx_before+span])
+        std = np.std(triggered_traces[i][idx_before-span : idx_before+span])
+        
+        threshold = mean + std_thresh*std
+        
+        signal = np.mean(triggered_traces[i][idx_after-span : idx_after+span])
+        
+        response_amplitudes.append(signal)
+        
+        if signal > threshold:
+            responses.append(1)
+        else:
+            responses.append(0)
+            
+            
+    response_fraction = np.mean(responses)
+    
+    mean_response_amplitude = np.mean(response_amplitudes)
+    
+    return response_fraction, responses, response_amplitudes, mean_response_amplitude

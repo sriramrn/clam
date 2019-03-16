@@ -150,3 +150,14 @@ def swim_latency(bout_start_time, flow_start_time, flow_end_time, trial_duration
                 trial_number.append(math.floor(bout_start_time[s]/trial_duration))
     
     return latency, trial_number
+
+
+def motor_free_flow_start_indices(flow_start, flow_end, motor_activity, motor_threshold=0.2):
+    
+    mf_fs = []
+
+    for i in range(len(flow_start)):
+        if max(motor_activity[flow_start[i]:flow_end[i]]) <= motor_threshold:
+            mf_fs.append(flow_start[i])
+            
+    return mf_fs
