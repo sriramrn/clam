@@ -160,7 +160,7 @@ def local_stdv(data,window):
     Function adapted from:
     http://matlabtricks.com/post-20/calculate-standard-deviation-case-of-sliding-window
     """
-
+    data = np.array(data)
     W = window
     N = len(data)
     n = np.convolve(np.ones(N), np.ones(W), 'same')
