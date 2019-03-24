@@ -153,6 +153,26 @@ def rolling_avg(data,w):
     return avg
 
 
+def local_stdv(data,window):
+
+    """
+    Standard deviation of a sliding window across 1D data
+    Function adapted from:
+    http://matlabtricks.com/post-20/calculate-standard-deviation-case-of-sliding-window
+    """
+
+    W = window
+    N = len(data)
+    n = np.convolve(np.ones(N), np.ones(W), 'same')
+    s = np.convolve(data, np.ones(W), 'same')
+    q = data**2;
+    q = np.convolve(q, np.ones(W), 'same')
+    o = (q-s**2/n)/(n-1);
+    o = o**0.5
+
+    return o
+
+
 def ttl_edges(digital_signal, logic_level, begin_low = True, end_low = True):
     """logic_level should be 1 or 5"""
 
