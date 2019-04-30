@@ -141,6 +141,7 @@ def swim_latency(bout_start_time, flow_start_time, flow_end_time, trial_duration
     
     latency = []
     trial_number = []
+    lat_fst = []
     for i in range(len(flow_start_time)):
         s = np.where(np.array(bout_start_time) >= flow_start_time[i])[0]
         if len(s) != 0:
@@ -148,8 +149,9 @@ def swim_latency(bout_start_time, flow_start_time, flow_end_time, trial_duration
             if bout_start_time[s] <= flow_end_time[i]:
                 latency.append(bout_start_time[s]-flow_start_time[i])
                 trial_number.append(math.floor(bout_start_time[s]/trial_duration))
+                lat_fst.append(flow_start_time[i])
     
-    return latency, trial_number
+    return latency, trial_number, lat_fst
 
 
 def motor_free_flow_start_indices(flow_start, flow_end, motor_activity, motor_threshold=0.2):
