@@ -2,6 +2,7 @@ setup.py
 clam/__init__.py
 clam/bouts.py
 clam/load.py
+clam/plottools.py
 clam/utils.py
 clam.egg-info/PKG-INFO
 clam.egg-info/SOURCES.txt

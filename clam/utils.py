@@ -228,13 +228,20 @@ def triggered_response(raw_traces, trig_indices, trig_range, nframes):
     return triggered_traces, triggered_averages
 
 
-def get_trigger_frames_from_trigger_times(trigger_times, imaging_timestamp):
+def get_trigger_frames_from_trigger_times(trigger_times, imaging_timestamp, mode=None):
     
     loc = []
     for t in trigger_times:
         l = abs(imaging_timestamp - t).argmin()
-        loc.append(l)
-        
+	
+        if mode == 'nearest':
+            loc.append(l)
+        else:
+            if imaging_timestamp[l] - t < 0 :
+                loc.append(l+1)
+            else:
+                loc.append(l)
+
     return loc
 
 
