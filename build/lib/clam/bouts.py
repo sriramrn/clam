@@ -137,6 +137,25 @@ def bout_displacement(bout_duration,mean_bout_velocity):
     return disp
 
 
+def bout_acceleration(data, bout_index, numpoints=6):    
+    
+    bout_start = bout_index[0]
+    bout_end = bout_index[1]
+    
+    acc = []
+    for i in range(len(bout_start)):
+        
+        if numpoints > bout_end[i] - bout_start[i]:
+            a = float('nan')
+        
+        else:
+            a = (data[bout_start[i]+numpoints]-data[bout_start[i]]) / numpoints
+            
+        acc.append(a)
+    
+    return acc
+
+
 def swim_latency(bout_start_time, flow_start_time, flow_end_time, trial_duration):
     
     latency = []

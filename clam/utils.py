@@ -266,13 +266,14 @@ def select_trials_from_triggered_responses(triggered_traces, trial_indices, mode
     
     selected_traces, selected_averages = [],[]
     
+
     if mode == 'same':
         for i in range(ncells):
             st = []
             for ii in range(len(triggered_traces[i])):
                 if ii in trial_indices:
                     st.append(triggered_traces[i][ii])
-
+            
             selected_traces.append(st)
             selected_averages.append(np.mean(st,0))
             
@@ -280,7 +281,7 @@ def select_trials_from_triggered_responses(triggered_traces, trial_indices, mode
         for i in range(ncells):
             st = []
             for ii in range(len(triggered_traces[i])):
-                if len(trial_indices[i] > 0):
+                if len(trial_indices[i]) > 0:
                     if ii in trial_indices[i]:
                         st.append(triggered_traces[i][ii])
 
@@ -348,9 +349,9 @@ def detect_significant_responses(triggered_traces, idx_before, idx_after, span, 
         threshold = mean + std_thresh*std
         
         signal = np.mean(triggered_traces[i][idx_after-span : idx_after+span])
-        
-        response_amplitudes.append(signal)
-        
+        #response_amplitudes.append(signal)
+        response_amplitudes.append(np.max(triggered_traces[i][idx_before+span::]))        
+
         if signal > threshold:
             responses.append(1)
         else:

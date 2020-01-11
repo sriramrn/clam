@@ -40,12 +40,15 @@ def trig_plot_err(data, tstamp, error = 'stdv', linestyle = '-', color = 'black'
     
     if hideaxis:
         hide_mpl_axis(ax)
+        
+    ax.set_xlim(tstamp[0], tstamp[-1])
     
     return ax, ta, er_ta 
 
 
 
-def trig_plot_traces(data, tstamp, color = 'black', linealpha = 1, tracealpha = 0.15, linewidth = 2,
+def trig_plot_traces(data, tstamp, linecolor = 'black', tracecolor = 'lightgrey',
+                     linealpha = 1, tracealpha = 1, linewidth = 2,
                      tracewidth = 1, figsize = [4,4], axdim = [0.15, 0.15, 0.75, 0.75], 
                      axis_handle = None, hideaxis = True, label = None ):
     
@@ -57,22 +60,24 @@ def trig_plot_traces(data, tstamp, color = 'black', linealpha = 1, tracealpha = 
         ax = fig.add_axes(axdim)
         
         for i in range(np.array(data).shape[0]):
-            ax.plot(tstamp, data[i], color = color, alpha = tracealpha, linewidth = tracewidth)
+            ax.plot(tstamp, data[i], color = tracecolor, alpha = tracealpha, linewidth = tracewidth)
             
         
-        ax.plot(tstamp, ta, color = color, alpha = linealpha, linewidth = linewidth, label = label)
+        ax.plot(tstamp, ta, color = linecolor, alpha = linealpha, linewidth = linewidth, label = label)
         
     else:
         
         ax = axis_handle
         
         for i in range(np.array(data).shape[0]):
-            ax.plot(tstamp, data[i], color = color, alpha = tracealpha, linewidth = linewidth)        
+            ax.plot(tstamp, data[i], color = tracecolor, alpha = tracealpha, linewidth = tracewidth)        
         
-        ax.plot(tstamp, ta, color = color, alpha = linealpha, linewidth = linewidth, label = label)
+        ax.plot(tstamp, ta, color = linecolor, alpha = linealpha, linewidth = linewidth, label = label)
     
     if hideaxis:
         hide_mpl_axis(ax)
+        
+    ax.set_xlim(tstamp[0], tstamp[-1])
     
     return ax, ta
 

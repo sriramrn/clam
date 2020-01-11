@@ -257,21 +257,37 @@ def select_cells_from_triggered_responses(triggered_traces, triggered_averages, 
 
 
 
-def select_trials_from_triggered_responses(triggered_traces, trial_indices):
+def select_trials_from_triggered_responses(triggered_traces, trial_indices, mode='same'):
     
     # assumes this is a list of lists. If its a numpy array, this may return ntrials instead of ncells
-    ncells = len(triggered_traces)
+    triggered_traces = np.array(triggered_traces)
+    
+    ncells = triggered_traces.shape[0]
     
     selected_traces, selected_averages = [],[]
     
-    for i in range(ncells):
-        st = []
-        for ii in range(len(triggered_traces[i])):
-            if ii in trial_indices:
-                st.append(triggered_traces[i][ii])
-        
-        selected_traces.append(st)
-        selected_averages.append(np.mean(st,0))
+
+    if mode == 'same':
+        for i in range(ncells):
+            st = []
+            for ii in range(len(triggered_traces[i])):
+                if ii in trial_indices:
+                    st.append(triggered_traces[i][ii])
+            
+            selected_traces.append(st)
+            selected_averages.append(np.mean(st,0))
+            
+    if mode == 'individual':
+        for i in range(ncells):
+            st = []
+            for ii in range(len(triggered_traces[i])):
+                if len(trial_indices[i]) > 0:
+                    if ii in trial_indices[i]:
+                        st.append(triggered_traces[i][ii])
+
+            selected_traces.append(st)
+            selected_averages.append(np.mean(st,0))
+            
     
     return selected_traces, selected_averages
 
@@ -333,9 +349,9 @@ def detect_significant_responses(triggered_traces, idx_before, idx_after, span, 
         threshold = mean + std_thresh*std
         
         signal = np.mean(triggered_traces[i][idx_after-span : idx_after+span])
-        
-        response_amplitudes.append(signal)
-        
+        #response_amplitudes.append(signal)
+        response_amplitudes.append(np.max(triggered_traces[i][idx_before+span::]))        
+
         if signal > threshold:
             responses.append(1)
         else:
